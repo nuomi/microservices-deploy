@@ -1,0 +1,17 @@
+FROM jazzdd/alpine-flask
+
+RUN pip3 install requests
+
+# add service source
+ADD ../microservices/services ${APP_DIR}/services
+ADD ../microservices/database ${APP_DIR}/datase
+
+VOLUME [${APP_DIR}]
+WORKDIR ${APP_DIR}
+
+# expose web server port
+# only http, for ssl use reverse proxy
+EXPOSE 80
+
+# start command
+CMD nginx && uwsgi --ini /app.ini -w services/bookings:app
